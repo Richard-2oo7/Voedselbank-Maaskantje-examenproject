@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ProductController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -14,9 +15,10 @@ Route::get('/klantverzoeken', function () {
     return inertia('Klantverzoeken');
 });
 
-Route::get('/producten', function () {
-    return inertia('Producten');
-});
+// Route::get('/producten', function () {
+//     return inertia('Producten');
+// });
+Route::get('/producten', [ProductController::class, 'index']);
 
 Route::get('/productcategorieën', function () {
     return inertia('productcategorieën');

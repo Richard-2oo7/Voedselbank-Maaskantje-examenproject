@@ -11,7 +11,7 @@ class Product extends Model
     use HasFactory;
 
     function category() {
-        $this->belongsTo(Category::class);
+        return $this->belongsTo(Category::class);
     }
 
     function foodPacks() {

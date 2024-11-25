@@ -1,3 +1,7 @@
+<script setup>
+
+</script>
+
 <template>
     <Layout>
         <div>
@@ -6,6 +10,3 @@
     </Layout>
 </template>
 
-<script>
-
-</script>
