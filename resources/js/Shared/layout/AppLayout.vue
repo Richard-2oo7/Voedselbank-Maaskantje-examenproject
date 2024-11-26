@@ -1,3 +1,9 @@
+<script setup>
+    //components
+    import AppHeader from './AppHeader.vue'
+    import AppNav from './AppNav.vue'
+</script>
+
 <template>
     <div class="min-h-screen flex flex-col">
         <AppHeader/>
@@ -12,8 +18,3 @@
     </div>
 </template>
 
-<script setup>
-    //components
-    import AppHeader from './AppHeader.vue'
-    import AppNav from './AppNav.vue'
-</script>

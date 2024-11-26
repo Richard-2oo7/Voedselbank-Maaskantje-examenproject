@@ -48,7 +48,7 @@ class ProductController extends Controller
         //stuur reactie
         return response()->json([
             'product' => $product
-        ]);
+        ], 200);
     }
 
     /**

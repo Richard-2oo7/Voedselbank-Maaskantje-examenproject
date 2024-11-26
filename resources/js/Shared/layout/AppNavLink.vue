@@ -1,3 +1,10 @@
+<script setup>
+    //props
+    defineProps({
+        active: Boolean,
+    })
+</script>
+
 <template>
     <Link
     class="bg-gray-100 text-black w-full h-full flex items-center rounded-full px-4 py-3"
@@ -6,9 +13,3 @@
     </Link>
 </template>
 
-<script setup>
-    //props
-    defineProps({
-        active: Boolean,
-    })
-</script>
