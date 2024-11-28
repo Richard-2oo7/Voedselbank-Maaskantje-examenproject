@@ -11,7 +11,7 @@ class FoodPack extends Model
     use HasFactory;
 
     function client() {
-        $this->belongsTo(Client::class);
+        return $this->belongsTo(Client::class);
     }
 
     function products() {

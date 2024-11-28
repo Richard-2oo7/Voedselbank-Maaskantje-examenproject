@@ -18,6 +18,10 @@ return new class extends Migration
             $table->string('adres');
             $table->string('email')->unique();
             $table->string('telefoonnummer');
+            $table->boolean('veganistisch');
+            $table->boolean('vegetarisch');
+            $table->boolean('varkensvlees');
+            $table->string('allergisch')->nullable();
             $table->integer('volwassenen')->nullable();
             $table->integer('kinderen')->nullable();
             $table->integer('babys')->nullable();

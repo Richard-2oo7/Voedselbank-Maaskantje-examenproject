@@ -18,6 +18,7 @@ class ProductFactory extends Factory
     public function definition(): array
     {
         return [
+            'EAN' => fake()->unique()->regexify('[0-9]{13}'), // Alleen cijfers, 13 karakters
             'category_id' => fake()->randomElement(Category::pluck('id')->toArray()), //random categorie id
             'naam' => fake()->word(),
             'aantal' => fake()->numberBetween(0,15),

@@ -15,9 +15,9 @@ return new class extends Migration
         Schema::create('food_packs', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(Client::class)->constrained()->cascadeOnDelete();
-            $table->dateTime('datum_samenstelling');
-            $table->dateTime('uitgiftedatum');
-            $table->boolean('opgehaald');
+            $table->dateTime('datum_samenstelling')->default(now());
+            $table->dateTime('uitgiftedatum')->nullable();
+            $table->boolean('opgehaald')->default(false);
             $table->timestamps();
         });
     }

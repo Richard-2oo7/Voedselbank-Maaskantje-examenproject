@@ -14,6 +14,7 @@ return new class extends Migration
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
+            $table->char('EAN', 13); //13 cijferige code op een product
             $table->foreignIdFor(Category::class);
             $table->string('naam');
             $table->integer('aantal');

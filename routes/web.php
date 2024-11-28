@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ClientController;
+use App\Http\Controllers\FoodPackController;
 use App\Http\Controllers\ProductController;
 use Illuminate\Support\Facades\Route;
 
@@ -34,9 +35,10 @@ Route::get('/productcategorieën', function () {
     return inertia('productcategorieën');
 });
 
-Route::get('/voedselpakketten', function () {
-    return inertia('Voedselpakketten');
-});
+Route::get('/voedselpakketten', [FoodPackController::class, 'index']);
+Route::post('/voedselpakketten', [FoodPackController::class,'store']);
+Route::patch('/voedselpakketten/{id}', [FoodPackController::class, 'update']);
+Route::delete('/voedselpakketten', [FoodPackController::class,'destroyMultiple']);
 
 Route::get('/leveranciers', function () {
     return inertia('Leveranciers');
