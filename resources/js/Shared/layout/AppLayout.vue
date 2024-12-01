@@ -10,7 +10,7 @@
         <div class="flex flex-1">
             <AppNav/>
             <div class="w-full bg-slate-300 p-4 h-auto">
-                <div class="w-full h-full bg-white rounded-lg p-4">
+                <div class="w-full bg-white rounded-lg p-4">
                     <slot></slot>
                 </div>
             </div>

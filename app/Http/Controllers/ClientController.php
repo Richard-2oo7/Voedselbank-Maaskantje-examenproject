@@ -26,7 +26,7 @@ class ClientController extends Controller
      */
     public function create()
     {
-        //
+        return inertia('Aanmelden');
     }
 
     /**
@@ -36,27 +36,34 @@ class ClientController extends Controller
     {
         //valideer
         $validatedClient = $request->validate([
-            'postcode' => 'required|string|max:255',
+            'postcode' => 'required|string|max:255 ',
             'gezinsnaam' => 'required|string|max:255',
             'adres' => 'required|string|max:255',
-            'email' => 'required|string|max:255|email|unique:clients,email',
-            'telefoonnummer' => 'required|string|max:255',
+            'email' => 'required|string|max:255|email|unique:clients',
+            'telefoonnummer' => 'required|string|max:10',
+            'allergisch' => 'nullable|string|max:255',
             'veganistisch' => 'required|boolean',
             'vegetarisch' => 'required|boolean',
             'varkensvlees' => 'required|boolean',
-            'allergisch' => 'nullable|string',
-            'volwassenen' => 'required|integer|min:0',
+            'volwassenen' => 'required|integer|min:1',
             'kinderen' => 'required|integer|min:0',
             'babys' => 'required|integer|min:0',
         ]);
-    
+        // dd($request);
             //maak nieuwe klant
-            $client = Client::create($validatedClient);
+            Client::create($validatedClient);
     
             //stuur reactie
-            return response()->json([
-                'client' => $client
-            ], 200);
+            return redirect()->route('home')->with(
+                'message' , 'U bent succesvol aangemeld als klant. Een medewerker zal er spoedig naar kijken!'
+            );
+
+            //stuur mail in de toekomst
+            
+    }
+    //maakt een sessie
+    public function createSession(){
+        return redirect()->route('klanten');
     }
 
     /**
@@ -115,7 +122,6 @@ class ClientController extends Controller
             'message' => 'Klant succesvol geupdate!',
             'client' => $client,
         ], 202);
-
     }
 
     /**

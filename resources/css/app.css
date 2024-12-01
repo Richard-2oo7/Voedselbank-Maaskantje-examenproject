@@ -1,3 +1,38 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+div{
+    height: 100%;
+}
+
+/* Zorg dat autofill achtergrond transparant is */
+input:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0px 1000px transparent inset !important;
+    box-shadow: 0 0 0px 1000px transparent inset !important;
+    -webkit-text-fill-color: black !important; /* Zorg dat de tekstkleur correct blijft */
+    transition: background-color 5000s ease-in-out 0s; /* Onderdrukt standaard browser kleuren */
+}
+
+/* Optioneel: voeg compatibiliteit voor andere browsers toe */
+input:-moz-autofill {
+    box-shadow: 0 0 0px 1000px transparent inset !important;
+    -moz-text-fill-color: black !important;
+}
+
+input:-ms-autofill {
+    box-shadow: 0 0 0px 1000px transparent inset !important;
+}
+
+input[type="checkbox"]:checked::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 12px; /* Pas de breedte aan voor je gewenste grootte */
+    height: 12px; /* Pas de hoogte aan voor je gewenste grootte */
+    transform: translate(-50%, -50%);
+    background: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 13" fill="none"%3E%3Cpath d="M1 6L5.34783 11L11 1" stroke="white" stroke-width="2"/%3E%3C/svg%3E') no-repeat center center;
+    background-size: contain;
+    display: block;
+}
