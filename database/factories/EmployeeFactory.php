@@ -26,8 +26,8 @@ class EmployeeFactory extends Factory
             'role_id' => fake()->randomElement(Role::pluck('id')->toArray()), //random role id
             'naam' => fake()->name(),
             'gebruikersnaam' => fake()->name(),
-            'email' => fake()->name(),
-            'wachtwoord' => static::$password ??= Hash::make('password'),
+            'email' => fake()->email(),
+            'password' => static::$password ??= Hash::make('password'),
         ];
     }
 }

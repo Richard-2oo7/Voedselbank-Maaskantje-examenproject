@@ -38,7 +38,7 @@ return [
     'guards' => [
         'web' => [
             'driver' => 'session',
-            'provider' => 'users',
+            'provider' => 'employees',  // Zorg ervoor dat dit verwijst naar 'employees' i.p.v. 'users'
         ],
     ],
 
@@ -59,17 +59,12 @@ return [
     |
     */
 
-    'providers' => [
-        'users' => [
-            'driver' => 'eloquent',
-            'model' => env('AUTH_MODEL', App\Models\User::class),
-        ],
-
-        // 'users' => [
-        //     'driver' => 'database',
-        //     'table' => 'users',
-        // ],
+'providers' => [
+    'employees' => [
+        'driver' => 'eloquent',
+        'model' => App\Models\Employee::class,  // Zorg ervoor dat dit naar het juiste model verwijst
     ],
+],
 
     /*
     |--------------------------------------------------------------------------

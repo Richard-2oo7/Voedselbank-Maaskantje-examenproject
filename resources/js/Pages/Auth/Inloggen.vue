@@ -14,7 +14,7 @@
 
     const form = useForm({
         email: null,
-        wachtwoord: null,
+        password: null,
     })
 
     const submit = () => {
@@ -24,22 +24,17 @@
 <template>
     <div class="grid place-items-center"> 
         <FlashMessage :message="$page.props.flash.message"/>
-        <WhiteBox title="Inloggen" class="w-1/4">
+        <WhiteBox title="Inloggen" class="!w-1/4">
             <form @submit.prevent="submit">
                 <div class="flex flex-col gap-4 mt-4">
-                    <TextInput label="Email" v-model="form.email"/>
-                    <TextInput label="Wachtwoord" v-model="form.wachtwoord"/>
+                    <TextInput label="Email" v-model="form.email" :error="form.errors.email" type="email"/>
+                    <TextInput label="Wachtwoord" v-model="form.password" :error="form.errors.password" type="password"/>
                     <div class="flex">
                         <small><Link href="/reset-wachtwoord/check-email">Wachtwoord vergeten?</Link></small>
-                        <AppButton class="w-min ml-auto">Inloggen</AppButton>
+                        <AppButton class="w-min ml-auto" :disabled="form.processing">Inloggen</AppButton>
                     </div>
                 </div>
             </form>
-        </WhiteBox>
-        <WhiteBox class="absolute left-0 w-1/4">
-            <pre>
-                {{ form }}
-            </pre>
         </WhiteBox>
     </div>
 </template>

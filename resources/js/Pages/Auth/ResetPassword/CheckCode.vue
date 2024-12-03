@@ -20,28 +20,21 @@
     })
 
     const submit = () => {
-        form.post('/reset-wachtwoord/check-code', {
-            replace: true, //zorgt dat de url niet verandert
-        });
+        form.post('/reset-wachtwoord/check-code');
     }
 </script>
 <template>
     <div class="grid place-items-center"> 
-        <WhiteBox title="Wachtwoord resetten" class="w-1/4">
+        <WhiteBox title="Wachtwoord resetten" class="!w-1/4">
             <form @submit.prevent="submit">
                 <div class="flex flex-col gap-4 mt-4">
                     <small class="mb-5"><p>Voer de code in die naar <strong>{{ email }}</strong> is verzonden.</p></small>
-                    <TextInput label="Code" v-model="form.code"/>
+                    <TextInput label="Code" v-model="form.code" :error="form.errors.code"/>
                     <div class="flex">
-                        <AppButton class="w-min ml-auto">Resetten</AppButton>
+                        <AppButton class="w-min ml-auto" :disabled="form.processing">Resetten</AppButton>
                     </div>
                 </div>
             </form>
-        </WhiteBox>
-        <WhiteBox class="absolute left-0 w-1/4">
-            <pre>
-                {{ form }}
-            </pre>
         </WhiteBox>
     </div>
 </template>

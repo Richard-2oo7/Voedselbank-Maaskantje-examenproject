@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('naam');
             $table->string('gebruikersnaam');
             $table->string('email')->unique();
-            $table->string('wachtwoord');
+            $table->string('password');
             $table->timestamps();
         });
 

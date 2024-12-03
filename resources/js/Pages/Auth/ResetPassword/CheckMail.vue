@@ -21,21 +21,16 @@
 </script>
 <template>
     <div class="grid place-items-center"> 
-        <WhiteBox title="Wachtwoord resetten" class="w-1/4">
+        <WhiteBox title="Wachtwoord resetten" class="!w-1/4">
             <form @submit.prevent="submit">
                 <div class="flex flex-col gap-4 mt-4">
                     <small class="mb-5"><p>Voer uw email in om uw wachtwoord te kunnen wijzigen.</p></small>
-                    <TextInput label="Email" v-model="form.email"/>
+                    <TextInput label="Email" v-model="form.email" :error="form.errors.email"/>
                     <div class="flex">
-                        <AppButton class="w-min ml-auto" type="submit">Verstuur</AppButton>
+                        <AppButton class="w-min ml-auto" type="submit" :disabled="form.processing">Verstuur</AppButton>
                     </div>
                 </div>
             </form>
-        </WhiteBox>
-        <WhiteBox class="absolute left-0 w-1/4">
-            <pre>
-                {{ form }}
-            </pre>
         </WhiteBox>
     </div>
 </template>

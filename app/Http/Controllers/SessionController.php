@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 
 class SessionController extends Controller
 {
@@ -27,7 +29,23 @@ class SessionController extends Controller
      */
     public function store(Request $request)
     {
-        return redirect()->route('klanten');
+        $validatedCredentials = $request->validate([
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
+
+        if(Auth::attempt([
+            'email' => $validatedCredentials['email'],
+            'password' => $validatedCredentials['password'],
+        ])) {
+            request()->session()->regenerate();
+            return redirect()->route('klanten');
+        } else{
+            //stuur fout
+            throw ValidationException::withMessages([
+                'email' => "Invalid credentials",
+            ]);
+        }        
     }
 
     /**
@@ -57,8 +75,9 @@ class SessionController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy()
     {
-        //
+        Auth::logout();
+        return redirect()->route('home');
     }
 }

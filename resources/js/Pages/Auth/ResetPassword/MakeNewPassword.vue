@@ -13,32 +13,25 @@
 
     const form = useForm({
         password: null,
-        password_confirmed: null,
+        password_confirmation: null,
     })
 
     const submit = () => {
-        form.patch('/reset-wachtwoord/maak-wachtwoord', {
-            replace: true, //zorgt dat de url niet verandert
-        });
+        form.post('/reset-wachtwoord/maak-wachtwoord');
     }
 </script>
 <template>
     <div class="grid place-items-center"> 
-        <WhiteBox title="wachtwoord resetten" class="w-1/4">
+        <WhiteBox title="wachtwoord resetten" class="!w-1/4">
             <form @submit.prevent="submit">
                 <div class="flex flex-col gap-4 mt-4">
-                    <TextInput label="Nieuw wachtwoord" v-model="form.password" type="password"/>
-                    <TextInput label="Bevestig wachtwoord" v-model="form.password_confirmed" type="password"/>
+                    <TextInput label="Nieuw wachtwoord" v-model="form.password" type="password" :error="form.errors.password"/>
+                    <TextInput label="Bevestig wachtwoord" v-model="form.password_confirmation" type="password" :error="form.errors.password_confirmation"/>
                     <div class="flex">
-                        <AppButton class="w-min ml-auto">Resetten</AppButton>
+                        <AppButton class="w-min ml-auto" :disabled="form.processing">Resetten</AppButton>
                     </div>
                 </div>
             </form>
-        </WhiteBox>
-        <WhiteBox class="absolute left-0 w-1/4">
-            <pre>
-                {{ form }}
-            </pre>
         </WhiteBox>
     </div>
 </template>
