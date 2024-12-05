@@ -11,6 +11,6 @@ class Client extends Model
     use HasFactory;
 
     function foodPacks(){
-        $this->hasMany(FoodPack::class);
+       return $this->hasMany(FoodPack::class);
     }
 }

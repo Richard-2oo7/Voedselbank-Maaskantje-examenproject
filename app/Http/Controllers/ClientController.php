@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Mail\ConfirmRegistrationClient;
 use App\Models\Client;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class ClientController extends Controller
 {
@@ -52,14 +54,17 @@ class ClientController extends Controller
         // dd($request);
             //maak nieuwe klant
             Client::create($validatedClient);
-    
+
+            //stuur email daar de klant
+            $email = $validatedClient['email'];
+            Mail::to($email)->send(
+                new ConfirmRegistrationClient()
+            );
+            
             //stuur reactie
             return redirect()->route('home')->with(
                 'message' , 'U bent succesvol aangemeld als klant. Een medewerker zal er spoedig naar kijken!'
-            );
-
-            //stuur mail in de toekomst
-            
+            );  
     }
     //maakt een sessie
     public function createSession(){

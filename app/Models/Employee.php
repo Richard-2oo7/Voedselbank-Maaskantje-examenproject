@@ -11,6 +11,6 @@ class Employee extends Authenticatable
     use HasFactory;
 
     function role() {
-        $this->belongsTo(Role::class);
+        return $this->belongsTo(Role::class);
     }
 }

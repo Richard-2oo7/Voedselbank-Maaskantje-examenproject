@@ -38,8 +38,21 @@ class SessionController extends Controller
             'email' => $validatedCredentials['email'],
             'password' => $validatedCredentials['password'],
         ])) {
+            $userRole = Auth::user()->role->naam;
+            $route = null;
+            switch($userRole){
+                case 'directie':
+                    $route = 'klanten';
+                    break;
+                case 'magazijnmedewerker':
+                    $route = 'producten';
+                    break;
+                case 'vrijwilliger':
+                    $route = "voedselpakketten";
+                    break;
+            }
             request()->session()->regenerate();
-            return redirect()->route('klanten');
+            return redirect()->route($route);
         } else{
             //stuur fout
             throw ValidationException::withMessages([

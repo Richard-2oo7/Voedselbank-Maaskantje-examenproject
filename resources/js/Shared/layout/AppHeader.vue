@@ -32,10 +32,9 @@
 
 </script>
 <template>
-    <header class="w-full bg-orange-500 px-2 py-4 flex justify-between">
-        <div>
-            <h1 class="font-bold text-white text-2xl">Voedselbank Maaskantje</h1>
-        </div>
+    <header class="w-full bg-orange-500 p-4 flex justify-between items-center">
+        <h1 class="font-bold text-white text-2xl">Voedselbank Maaskantje</h1>
+
 
         <div class="flex flex-row gap-3" v-if="!$page.props.auth.user">
             <AppNavLink :active="$page.component.endsWith('Home')" href="/" :black="true">Home</AppNavLink>
@@ -54,15 +53,9 @@
                 </span>
             </div>
 
-            <div class="absolute z-10 bg-white h-max shadow-lg bottom-0 right-0 translate-y-full w-40 rounded overflow-hidden" :class="{'hidden': !open}">
-                <ul>
-                    <li class="px-3 py-2 hover:bg-black hover:text-white cursor-pointer">
-                        <Link href="#">Profiel</Link> 
-                    </li>
-                    <li class="px-3 py-2 hover:bg-black hover:text-white cursor-pointer">
-                        <Link href="/uitloggen" method="post">Uitloggen</Link> 
-                    </li>
-                </ul>
+            <div class="absolute z-10 bg-white h-max shadow-lg bottom-0 right-0 translate-y-full w-40 rounded overflow-hidden" :class="{'hidden': !open}">           
+                <Link class="block px-3 py-2 hover:bg-black hover:text-white cursor-pointer w-full" href="#">Profiel</Link>
+                <Link class="block px-3 py-2 hover:bg-black hover:text-white cursor-pointer w-full text-start" href="/uitloggen" method="post" as="button">Uitloggen</Link>
             </div>
 
         </div>

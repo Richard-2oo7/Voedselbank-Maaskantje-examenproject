@@ -9,14 +9,14 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class ConfirmEmailForPasswordReset extends Mailable
+class ConfirmRegistrationClient extends Mailable
 {
     use Queueable, SerializesModels;
 
     /**
      * Create a new message instance.
      */
-    public function __construct(public $code)
+    public function __construct()
     {
         //
     }
@@ -27,7 +27,7 @@ class ConfirmEmailForPasswordReset extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Reset wachtwoord',
+            subject: 'bevestiging registratie voedselbank maaskantje',
         );
     }
 
@@ -37,7 +37,7 @@ class ConfirmEmailForPasswordReset extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'mail.ConfirmEmployeeEmail',
+            view: 'mail.ConfirmRegistrationClient',
         );
     }
 
