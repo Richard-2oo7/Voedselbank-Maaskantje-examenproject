@@ -3,13 +3,12 @@
 namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class ConfirmRegistrationClient extends Mailable
+class ResponseCLientRequest extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -27,7 +26,7 @@ class ConfirmRegistrationClient extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Bevestiging registratie',
+            subject: 'Reactie klantverzoek',
         );
     }
 
@@ -37,7 +36,7 @@ class ConfirmRegistrationClient extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'mail.ConfirmRegistrationClient',
+            markdown: 'mail.clientRequestResponse',
         );
     }
 

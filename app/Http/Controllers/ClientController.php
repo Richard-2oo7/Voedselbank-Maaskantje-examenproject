@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Mail\ConfirmRegistrationClient;
+use App\Mail\ClientRequestResponse;
 use App\Models\Client;
-use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 
@@ -21,6 +21,71 @@ class ClientController extends Controller
         return inertia('Klanten', [
             'clients' => $clients,
         ]);
+    }
+    
+    /**
+    * Display a listing of the resource.
+    */
+    public function indexCLientRequests()
+    {
+        $clients = Client::query()->where('is_klant', false)->paginate(15);
+        
+        return inertia('Klantverzoeken', [
+            'clientRequests' => $clients,
+        ]);
+    }
+
+    /**
+    * Accept new client
+    */
+    public function responseClientRequest(Request $request)
+    {   
+        //valideer
+        $validatedClientRequest = $request->validate([
+            'id' => 'required|exists:clients',
+            'is_added' => 'required|boolean',
+            'is_rejected' => 'required|boolean',
+        ]);
+
+        //zoek de klant en pak de email
+        $client = Client::find($request->input('id'));
+        $clientEmail = $client->email;
+
+        //maak de reactie van de medewerker aan
+        $medewerkerReactie = [];
+
+        //kijkt of klant word toegevoegt of verwijdert
+        if ($validatedClientRequest['is_added']) {
+            //voeg de klant toe
+            $client->update([
+                'is_klant' => true,
+            ]);
+            
+            //pas de reactie van de medewerker aan
+            $medewerkerReactie = [
+                'word_klant' => true,
+                'reden_afwijzing' => $request->input('beschrijving'),
+            ];
+
+        } else if ($validatedClientRequest['is_rejected']) {
+            //validate the request
+            $request->validate([
+                'message' => 'String|max:255'
+            ]);
+
+            $medewerkerReactie = [
+                'word_klant' => false,
+            ];
+
+            //verwijder de klant
+            $client->delete();
+        }         
+
+        //stuur mail met reactie van de medewerker
+        Mail::to($clientEmail)->send(
+            new ClientRequestResponse($medewerkerReactie)
+        );
+
     }
 
     /**
@@ -51,20 +116,20 @@ class ClientController extends Controller
             'kinderen' => 'required|integer|min:0',
             'babys' => 'required|integer|min:0',
         ]);
-        // dd($request);
-            //maak nieuwe klant
-            Client::create($validatedClient);
 
-            //stuur email daar de klant
-            $email = $validatedClient['email'];
-            Mail::to($email)->send(
-                new ConfirmRegistrationClient()
-            );
-            
-            //stuur reactie
-            return redirect()->route('home')->with(
-                'message' , 'U bent succesvol aangemeld als klant. Een medewerker zal er spoedig naar kijken!'
-            );  
+        //maak nieuwe klant
+        Client::create($validatedClient);
+
+        //stuur email daar de klant
+        $email = $validatedClient['email'];
+        Mail::to($email)->send(
+            new ConfirmRegistrationClient()
+        );
+        
+        //stuur reactie
+        return redirect()->route('home')->with(
+            'message' , 'U bent succesvol aangemeld als klant. Een medewerker zal er spoedig naar kijken!'
+        );  
     }
     //maakt een sessie
     public function createSession(){
@@ -130,9 +195,9 @@ class ClientController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Remove the resource from storage.
      */
-    public function destroyMultiple(Request $request)
+    public function destroy(Request $request)
     {
         //valideer
         $request->validate([

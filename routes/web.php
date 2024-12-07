@@ -6,13 +6,16 @@ use App\Http\Controllers\FoodPackController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ResetPasswordController;
 use App\Http\Controllers\SessionController;
+use App\Http\Controllers\SupplierController;
 use App\Http\Middleware\RoleMiddleware;
 use Illuminate\Support\Facades\Route;
 
 
 
 Route::inertia('/', 'Home')->name('home');
+
 Route::middleware('guest')->group(function(){
+
     Route::get('/aanmelden', [ClientController::class, 'create'])->name('klantAanmelden');
     Route::post('/klanten', [ClientController::class,'store']);
     
@@ -20,15 +23,16 @@ Route::middleware('guest')->group(function(){
     Route::post('/inloggen', [SessionController::class, 'store']);
     
     Route::prefix('reset-wachtwoord')->name('resetWachtwoord.')->group(function () {
-        Route::get('check-email', [ResetPasswordController::class, 'checkEmailShow'])->name('checkEmail'); // wachtwoord-vergeten/check-email
-        Route::post('check-email', [ResetPasswordController::class, 'checkEmail']); // wachtwoord-vergeten/check-email
+        Route::get('check-email', [ResetPasswordController::class, 'checkEmailShow'])->name('checkEmail');
+        Route::post('check-email', [ResetPasswordController::class, 'checkEmail']);
 
-        Route::get('check-code', [ResetPasswordController::class, 'checkCodeShow'])->name('checkCode'); // wachtwoord-vergeten/check-code
-        Route::post('check-code', [ResetPasswordController::class, 'checkCode']); // wachtwoord-vergeten/check-code
+        Route::get('check-code', [ResetPasswordController::class, 'checkCodeShow'])->name('checkCode');
+        Route::post('check-code', [ResetPasswordController::class, 'checkCode']);
 
-        Route::get('maak-wachtwoord', [ResetPasswordController::class, 'createNewPasswordShow'])->name('maakWachtwoord'); // wachtwoord-vergeten/maak-password
-        Route::post('maak-wachtwoord', [ResetPasswordController::class, 'createNewPassword']); // wachtwoord-vergeten/make-password
+        Route::get('maak-wachtwoord', [ResetPasswordController::class, 'createNewPasswordShow'])->name('maakWachtwoord');
+        Route::post('maak-wachtwoord', [ResetPasswordController::class, 'createNewPassword']);
     });
+    
 });
 
 
@@ -36,47 +40,42 @@ Route::middleware('auth')->group(function(){
 
     Route::post('/uitloggen', [SessionController::class, 'destroy']);
 
+    //pagina's voor de magazijnmedewerker
     Route::middleware([RoleMiddleware::class. ':magazijnmedewerker'])->group(function(){
         Route::get('/producten', [ProductController::class, 'index'])->name('producten');
         Route::post('/producten', [ProductController::class, 'store']);
         Route::patch('/producten/{id}', [ProductController::class, 'update']);
-        Route::delete('/producten', [ProductController::class, 'destroyMultiple']);
+        Route::delete('/producten', [ProductController::class, 'destroy']);
+
+        Route::get('/leveranciers',  [SupplierController::class, 'index'])->name('leveranciers');
+        Route::post('/leveranciers',  [SupplierController::class, 'store']);
+        Route::patch('/leveranciers',  [SupplierController::class, 'update']);
+        Route::delete('/leveranciers',  [SupplierController::class, 'destroy']);
+    });
+
+    //paginas voor de vrijwilliger
+    Route::middleware([RoleMiddleware::class. ':vrijwilliger'])->group(function(){
+        Route::get('/voedselpakketten', [FoodPackController::class, 'index'])->name('voedselpakketten');
+        Route::post('/voedselpakketten', [FoodPackController::class,'store']);
+        Route::delete('/voedselpakketten', [FoodPackController::class,'destroy']);
     });
 
     Route::middleware([RoleMiddleware::class])->group(function(){
         Route::get('/klanten', [ClientController::class, 'index'])->name('klanten');
         Route::patch('/klanten/{id}', [ClientController::class, 'update']);
-        Route::delete('/klanten', [ClientController::class,'destroyMultiple']);
-    });
+        Route::delete('/klanten', [ClientController::class,'destroy']);
 
-    Route::middleware([RoleMiddleware::class])->group(function(){
-        Route::get('/klantverzoeken', function () {
-            return inertia('Klantverzoeken');
-        })->name('klantverzoeken');
-    });
-    Route::middleware([RoleMiddleware::class])->group(function(){
-        Route::get('/productcategorieën', function () {
-            return inertia('productcategorieën');
-        })->name('productcategorieën');
-    });
+        Route::get('/klantverzoeken', [ClientController::class, 'indexCLientRequests']);
 
-    Route::middleware([RoleMiddleware::class. ':vrijwilliger'])->group(function(){
-        Route::get('/voedselpakketten', [FoodPackController::class, 'index'])->name('voedselpakketten');
-        Route::post('/voedselpakketten', [FoodPackController::class,'store']);
-        Route::patch('/voedselpakketten/{id}', [FoodPackController::class, 'update']);
-        Route::delete('/voedselpakketten', [FoodPackController::class,'destroyMultiple']);
-    });
+        Route::get('/medewerkers', [EmployeeController::class,'index'])->name('medewerkers');
+        Route::post('/medewerkers',  [EmployeeController::class, 'store']);
+        Route::patch('/medewerkers',  [EmployeeController::class, 'update']);
+        Route::delete('/medewerkers',  [EmployeeController::class, 'destroy']);
 
-    Route::middleware([RoleMiddleware::class. ':magazijnmedewerker'])->group(function(){
-        Route::get('/leveranciers', function () {
-            return inertia('Leveranciers');
-        })->name('leveranciers');
-    });
-
-    Route::middleware([RoleMiddleware::class])->group(function(){
-        Route::get('/medewerkers', function () {
-            return inertia('Medewerkers');
-        })->name('medewerkers');
+        Route::get('/productcategorieën', [ProductController::class, 'IndexCategory'])->name('productcategorieën');
+        Route::post('/productcategorieën',  [ProductController::class, 'store']);
+        Route::patch('/productcategorieën',  [ProductController::class, 'update']);
+        Route::delete('/productcategorieën',  [ProductController::class, 'destroy']);
     });
 
 });

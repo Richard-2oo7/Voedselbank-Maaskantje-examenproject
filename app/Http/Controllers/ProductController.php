@@ -49,7 +49,6 @@ class ProductController extends Controller
             'product' => $product
         ], 200);
     }
-
     /**
      * Display the specified resource.
      */
@@ -57,7 +56,6 @@ class ProductController extends Controller
     {
         //
     }
-
     /**
      * Show the form for editing the specified resource.
      */
@@ -98,15 +96,7 @@ class ProductController extends Controller
         ], 200);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
-    }
-
-    public function destroyMultiple(Request $request)
+    public function destroy(Request $request)
     {
         //valideer
         $request->validate([
@@ -118,7 +108,7 @@ class ProductController extends Controller
             //verwijder het product
             $ids = $request->input('ids');
             Product::whereIn('id', $ids)->delete();
-    
+            
             //stuur reactie
             return response()->json([
                 'message' => 'Producten succesvol verwijdert!',
@@ -131,5 +121,13 @@ class ProductController extends Controller
                 'error' => $e->getMessage(),
             ], 500); 
         }
+    }
+
+    public function IndexCategory () {
+        return inertia('productcategorieën');
+    }
+    
+    public function storeProductCategory () {
+        
     }
 }

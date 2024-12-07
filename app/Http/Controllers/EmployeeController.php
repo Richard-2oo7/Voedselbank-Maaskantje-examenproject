@@ -12,7 +12,7 @@ class EmployeeController extends Controller
      */
     public function index()
     {
-        // return inertia('Auth/WachtwoordVergeten');
+        return inertia('Medewerkers');
     }
 
     /**
