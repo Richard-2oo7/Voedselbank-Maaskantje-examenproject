@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\FoodPackController;
@@ -72,10 +73,10 @@ Route::middleware('auth')->group(function(){
         Route::patch('/medewerkers',  [EmployeeController::class, 'update']);
         Route::delete('/medewerkers',  [EmployeeController::class, 'destroy']);
 
-        Route::get('/productcategorieën', [ProductController::class, 'IndexCategory'])->name('productcategorieën');
-        Route::post('/productcategorieën',  [ProductController::class, 'store']);
-        Route::patch('/productcategorieën',  [ProductController::class, 'update']);
-        Route::delete('/productcategorieën',  [ProductController::class, 'destroy']);
+        Route::get('/productcategorieën', [CategoryController::class, 'index'])->name('productcategorieën');
+        Route::post('/productcategorieën',  [CategoryController::class, 'store']);
+        Route::patch('/productcategorieën',  [CategoryController::class, 'update']);
+        Route::delete('/productcategorieën',  [CategoryController::class, 'destroy']);
     });
 
 });

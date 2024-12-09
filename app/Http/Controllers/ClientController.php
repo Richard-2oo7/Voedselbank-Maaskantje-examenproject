@@ -16,7 +16,9 @@ class ClientController extends Controller
      */
     public function index()
     {
-        $clients = Client::query()->where('is_klant', true)->paginate(15);
+        // $clients = Client::query()->where('is_klant', true)->paginate(15);
+        $clients = Client::query()->filter(request(['search']))->paginate(15)->withQueryString();
+        
         
         return inertia('Klanten', [
             'clients' => $clients,
@@ -28,10 +30,10 @@ class ClientController extends Controller
     */
     public function indexCLientRequests()
     {
-        $clients = Client::query()->where('is_klant', false)->paginate(15);
+        $clients = Client::query()->filter(request(['search']) + ['is_klant' => false])->paginate(15)->withQueryString();
         
         return inertia('Klantverzoeken', [
-            'clientRequests' => $clients,
+            'klantverzoeken' => $clients,
         ]);
     }
 

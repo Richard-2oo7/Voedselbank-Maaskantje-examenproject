@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\Category;
 use Illuminate\Http\Request;
 
 class CategoryController extends Controller
@@ -12,9 +13,13 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        //
+        $categorieën = Category::query()->paginate(15);
+        
+        return inertia('productcategorieën', [
+            'productCategorieën' => $categorieën,
+        ]);
     }
-
+    
     /**
      * Show the form for creating a new resource.
      */

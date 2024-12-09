@@ -1,6 +1,6 @@
 <script setup>
     defineProps({
-        foodPacks: Object
+        voedselpakketten: Object
     });
 </script>
 
@@ -8,8 +8,8 @@
     <Layout>
         <div>
             <h1>Voedselpakketten</h1>
+            <pre>{{ voedselpakketten }}</pre>
         </div>
-        <pre>{{ foodPacks }}</pre>
     </Layout>
 </template>
 

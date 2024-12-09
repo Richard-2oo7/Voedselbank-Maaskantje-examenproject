@@ -11,13 +11,19 @@ class ProductController extends Controller
      /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
+        // dd($request);
         //25 producten per pagina
-        $product = Product::query()->with('category')->paginate(25);
+        $product = Product::query()
+            ->with('category')
+            ->filter(request(['search', 'category_id']))
+            ->paginate(25)
+            ->withQueryString();
 
         return inertia('Producten', [
             'product' => $product,
+            'search' => $request->search,
         ]);
     }
 
@@ -121,13 +127,5 @@ class ProductController extends Controller
                 'error' => $e->getMessage(),
             ], 500); 
         }
-    }
-
-    public function IndexCategory () {
-        return inertia('productcategorieën');
-    }
-    
-    public function storeProductCategory () {
-        
     }
 }

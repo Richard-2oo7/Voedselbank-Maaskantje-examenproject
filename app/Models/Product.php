@@ -17,4 +17,17 @@ class Product extends Model
     function foodPacks() {
         return $this->belongsToMany(FoodPack::class, 'FoodPackProducts');
     }
+    
+    function scopeFilter($query, array $filters ) {
+        if($filters['search'] ?? false) {
+            $query->where(function($q) {
+                $q->where('naam', 'like', '%'. request('search') . '%')
+                  ->orWhere('EAN', 'like', '%'. request('search') . '%');
+            });
+        }
+        if($filters['category_id'] ?? false) {
+            $query->where('category_id',  request('category_id'));
+        }
+
+    }
 }

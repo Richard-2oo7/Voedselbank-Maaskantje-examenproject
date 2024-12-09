@@ -17,4 +17,13 @@ class FoodPack extends Model
     function products() {
         return $this->belongsToMany(Product::class, 'FoodPackProducts');
     }
+
+    function scopeFilter($query, array $filters) {
+        if($filters['search'] ?? null) {
+            $query->where(function($q) {
+                $q->where('id', request('search'))
+                  ->orWhere('client_id', request('search'));
+            });
+        }
+    }
 }

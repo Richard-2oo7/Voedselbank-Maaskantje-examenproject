@@ -14,13 +14,19 @@ class FoodPackController extends Controller
      */
     public function index()
     {
-        $foodPacks = FoodPack::with('client:id,volwassenen,kinderen,babys')->select('id', 'client_id', 'uitgiftedatum', 'opgehaald')->whereHas('client', function($query){
-            $query->where('is_klant', true);
-        })->paginate(15);
+        $foodPacks = FoodPack::query()
+            ->with('client:id,volwassenen,kinderen,babys')
+            ->filter(request(['search']))
+            ->select('id', 'client_id', 'uitgiftedatum', 'opgehaald')
+            ->whereHas('client', function($query){
+                $query->where('is_klant', true);
+            })
+            ->paginate(15)
+            ->withQueryString();
 
         //stuur gegevens
         return inertia('Voedselpakketten', [
-            'foodPacks' => $foodPacks,
+            'voedselpakketten' => $foodPacks,
         ]);
     }
 

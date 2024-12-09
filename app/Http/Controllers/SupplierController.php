@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\Supplier;
 use Illuminate\Http\Request;
 
 class SupplierController extends Controller
@@ -12,7 +13,11 @@ class SupplierController extends Controller
      */
     public function index()
     {
-        return inertia('Leveranciers');
+        $suppliers = Supplier::query()->filter(request(['search']))->paginate(15)->withQueryString();
+
+        return inertia('Leveranciers', [
+            'leveranciers' => $suppliers
+        ]);
     }
 
     /**

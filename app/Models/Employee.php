@@ -13,4 +13,15 @@ class Employee extends Authenticatable
     function role() {
         return $this->belongsTo(Role::class);
     }
+
+    function scopeFilter($query, array $filters) {
+        if ($filters['search'] ?? null) {
+            $query->where(function($q) {
+                $q->where('naam', 'like', '%' .request('search'). '%')
+                  ->orWhere('gebruikersnaam', 'like', '%' .request('search'). '%')
+                  ->orWhere('email', 'like', '%' .request('search'). '%')
+                  ->orWhere('telefoonnummer', 'like', '%' .request('search') .'%');
+            });
+        }
+    }
 }
