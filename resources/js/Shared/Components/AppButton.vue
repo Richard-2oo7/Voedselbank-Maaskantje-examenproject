@@ -1,15 +1,23 @@
 <script setup>
     defineProps({
-        disabled: {
-            type: Boolean,
-            default: false,
+        disabled: Boolean,
+        withIcon: Boolean,
+        variant: {
+            type: String,
+            default: 'normal',
         }
     })
 </script>
 
 <template>
-    <Button class="bg-orange-500 text-white flex items-center rounded-full px-4 py-3" :disabled="disabled" :class="{ ' opacity-50': disabled  }">
+    <button class="bg-orange-500 text-white flex items-center rounded-full px-4 py-3" 
+    :disabled="disabled" 
+    :class="{ 'opacity-50': disabled, 
+              '[&>img]:mr-1' : withIcon ?? false,
+              'text-sm [&>img]:h-4' : variant ==  'small',
+              }"
+    @click="console.log(disabled)"
+    >
         <slot></slot>
-    </Button>
+    </button>
 </template>
-

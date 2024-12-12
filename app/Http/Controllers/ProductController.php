@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Http\Request;
 
@@ -18,12 +19,14 @@ class ProductController extends Controller
         $product = Product::query()
             ->with('category')
             ->filter(request(['search', 'category_id']))
-            ->paginate(25)
+            ->paginate(14)
             ->withQueryString();
 
+        $options = Category::select('id', 'naam')->get();
+
         return inertia('Producten', [
-            'product' => $product,
-            'search' => $request->search,
+            'producten' => $product,
+            'options' => $options,
         ]);
     }
 
@@ -52,7 +55,7 @@ class ProductController extends Controller
 
         //stuur reactie
         return response()->json([
-            'product' => $product
+            'producten' => $product
         ], 200);
     }
     /**
@@ -104,6 +107,7 @@ class ProductController extends Controller
 
     public function destroy(Request $request)
     {
+        // dd($request);
         //valideer
         $request->validate([
             'ids' => 'required|array',
@@ -114,13 +118,12 @@ class ProductController extends Controller
             //verwijder het product
             $ids = $request->input('ids');
             Product::whereIn('id', $ids)->delete();
-            
             //stuur reactie
             return response()->json([
                 'message' => 'Producten succesvol verwijdert!',
             ], 200);
         }
-        catch(\Exception $e) {
+        catch (\Exception $e) {
             //stuur reactie bij fout
             return response()->json([
                 'message' => 'Fout in producten verwijderen!',

@@ -27,7 +27,7 @@ class DatabaseSeeder extends Seeder
         Employee::factory(10)->create();
         Supplier::factory(10)->create();
         Client::factory(10)->create();
-        Product::factory(10)->create();
+        Product::factory(1090)->create();
         FoodPack::factory(10)->create();
         Food_pack_product::factory(10)->create();
 
