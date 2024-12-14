@@ -3,8 +3,8 @@
 
     import AppLayout from '../Shared/layout/AppHeaderLayout.vue'
     import WhiteBox from '../Shared/Components/WhiteBox.vue'
-    import TextInput from '../Shared/Components/TextInput.vue'
-    import CheckBox from '../Shared/Components/CheckBox.vue'
+    import TextInput from '../Shared/Components/form/TextInput.vue'
+    import CheckBox from '../Shared/Components/form/CheckBox.vue'
     import SubmitButton from '../Shared/Components/AppButton.vue'
 
     defineOptions({

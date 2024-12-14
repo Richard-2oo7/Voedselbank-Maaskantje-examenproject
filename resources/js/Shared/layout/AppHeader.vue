@@ -1,7 +1,7 @@
 <script setup>
     import AppNavLink from '../Components/AppNavLink.vue';
     import { onBeforeUnmount, onMounted, ref } from 'vue';
-
+    
     defineProps({
         ingelogd: {
             type: Boolean,

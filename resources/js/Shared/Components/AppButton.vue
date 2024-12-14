@@ -16,7 +16,6 @@
               '[&>img]:mr-1' : withIcon ?? false,
               'text-sm [&>img]:h-4' : variant ==  'small',
               }"
-    @click="console.log(disabled)"
     >
         <slot></slot>
     </button>

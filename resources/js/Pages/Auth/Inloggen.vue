@@ -4,7 +4,7 @@
     import AppLayout from '../../Shared/layout/AppHeaderLayout.vue'
 
     import WhiteBox from '../../Shared/Components/WhiteBox.vue';
-    import TextInput from '../../Shared/Components/TextInput.vue';
+    import TextInput from '../../Shared/Components/form/TextInput.vue';
     import AppButton from '../../Shared/Components/AppButton.vue';
     import FlashMessage from '../../Shared/Components/FlashMessage.vue';
 

@@ -1,16 +1,18 @@
 <script setup>
     import AppButton from '../Shared/Components/AppButton.vue';
-    import CheckBox from '../Shared/Components/CheckBox.vue';
+    import CheckBox from '../Shared/Components/form/CheckBox.vue';
     import IconButton from '../Shared/Components/IconButton.vue';
     import AppTable from '../Shared/Components/Table.vue';
     import SearchInput from '../Shared/Components/SearchInput.vue';
-
-    import WhiteBox from '../Shared/Components/WhiteBox.vue'
-
+    import PopUp from '../Shared/Components/PopUp.vue';
+    import ProductForm from '../Shared/Components/form/ProductForm.vue';
+    import FlashMessage from '../Shared/Components/FlashMessage.vue';
+    
+    
     import { router } from '@inertiajs/vue3';
     import { ref, watch, reactive } from 'vue';
     import { debounce } from 'lodash';
-
+    
     const params = route().params;
 
     const props = defineProps({
@@ -89,15 +91,26 @@
                 console.error(error.response.data);
             });
     }
+
+    const popUpContent = ref({title: 'Product aanmaken', component: ProductForm, purpose: 'make', values: null})
+    const open = ref(false);
+    const showPopup = (title, component, purpose, values) => {
+        popUpContent.value = {title, component, purpose, values};
+        open.value = true;
+    }
 </script>
 
 <template>
+    <FlashMessage v-model="$page.props.flash.message"/>
+    <PopUp :popUptitle="popUpContent.title" v-model="open">
+        <ProductForm :values="popUpContent.values" :purpose="popUpContent.purpose" v-model="open"></ProductForm>
+    </PopUp>
     <Layout>
         <div>
             <div class="h-min flex justify-between">
 
                 <div class="flex space-x-1 mb-2">
-                    <AppButton variant="small">Nieuw product aanmaken</AppButton>
+                    <AppButton variant="small" @click="showPopup('product aanmaken', ProductForm, 'make', {options})">Nieuw product aanmaken</AppButton>
                     <AppButton variant="small" :withIcon="true" :disabled="!checkedProducts() .length" @click="deleteProducts()">
                         <img src="/public/Icons/DeleteIcon.svg" alt="icon">Verwijderen
                     </AppButton>
@@ -105,7 +118,7 @@
 
                 <div class="space-x-1 flex">
                     <select class="border border-black p-2 rounded-full" v-model="category">
-                        <option class="hover:bg-orange-500" value="0">Alle categorieën</option>
+                        <option value="0">Alle categorieën</option>
                         <option v-for="option in options" :value="option.id" :key="option.id">{{ option.naam }}</option>
                     </select>
                     <SearchInput v-model="search" :searchTerm="params.search"/>
@@ -114,10 +127,10 @@
             </div>
 
             <AppTable :heads="['','ProductNr', 'Naam', 'Categorie', 'Aantal op voorraad']">
-                <tr v-for="(product) in producten.data" :key="product.id" class="border-t [&>td]:py-1 [&>td]: [&>td]:items-center">
+                <tr v-for="product in producten.data" :key="product.id" class="border-t [&>td]:py-1 [&>td]: [&>td]:items-center hover:bg-slate-100">
                     <td class="space-x-2 flex items-center">
                         <CheckBox v-model="checkBoxArr[product.id].checked"/>
-                        <IconButton>
+                        <IconButton @click="showPopup('Product bewerken', ProductForm, 'edit', {options:options, product:product},)">
                             <img src="/public/icons/editIcon.svg" alt="icon">
                         </IconButton>
                     </td>

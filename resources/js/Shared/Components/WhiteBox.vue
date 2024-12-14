@@ -1,6 +1,6 @@
 <script setup>
     //props
-    const props = defineProps({
+    defineProps({
         title: {
             type: String,
             default: 'Scherm',

@@ -46,7 +46,8 @@ class ProductController extends Controller
         //valideer
         $validatedProduct = $request->validate([
             'naam' => 'required|string|max:255',
-            'aantal' => 'required|integer|max:10',
+            'EAN' => 'required|string|min:13|max:13|unique:products',
+            'aantal' => 'required|integer',
             'category_id' => 'required|exists:categories,id',
         ]);
 
@@ -54,9 +55,7 @@ class ProductController extends Controller
         $product = Product::create($validatedProduct);
 
         //stuur reactie
-        return response()->json([
-            'producten' => $product
-        ], 200);
+        return redirect()->back()->with('message', 'Product is succesvol aangemaakt!');
     }
     /**
      * Display the specified resource.
@@ -80,8 +79,8 @@ class ProductController extends Controller
     {
         //valideer de gegevens
         $validatedProduct =$request->validate([
-            'naam' => 'required|string|max:255',
-            'aantal' => 'required|integer|max:10',
+            'naam' => 'required|string|max:255|min:1',
+            'aantal' => 'required|integer|min:0',
             'category_id' => 'required|exists:categories,id',
         ]);
 
@@ -90,19 +89,17 @@ class ProductController extends Controller
 
         //kijk of het bestaat
         if(!$product) {
-            return response()->json([
-                'message' => 'Het product bestaat niet!',
-            ], 404);
+            // return response()->json([
+            //     'message' => 'Het product bestaat niet!',
+            // ], 404);
+            return redirect()->back()->with('message', 'Het product bestaat niet.');
         }
 
         //update het product
         $product->update($validatedProduct);
 
         //stuur reactie
-        return response()->json([
-            'message' => 'Product succesvol geupdate!',
-            'Product' => $product,
-        ], 200);
+        return redirect()->back()->with('message', 'Het product is succesvol geupdate');
     }
 
     public function destroy(Request $request)

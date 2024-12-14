@@ -1,5 +1,5 @@
 <script setup>
-    import CheckBox from '../Components/CheckBox.vue'
+    import CheckBox from './form/CheckBox.vue'
     defineProps({
         heads: Array,
     });

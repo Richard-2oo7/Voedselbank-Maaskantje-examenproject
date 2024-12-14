@@ -22,6 +22,7 @@
             :type="type" 
             class="block py-2.5 px-0 w-full text-sm text-black bg-transparent border-0 border-b border-black appearance-none focus:outline-none focus:ring-0 peer" 
             placeholder=""
+            :value="modelValue"
             @input="$emit('update:modelValue', $event.target.value)"
             >
             <!-- :required="required" -->
