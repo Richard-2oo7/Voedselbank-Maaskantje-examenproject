@@ -31,7 +31,7 @@
                     <TextInput label="Wachtwoord" v-model="form.password" :error="form.errors.password" type="password"/>
                     <div class="flex">
                         <small><Link href="/reset-wachtwoord/check-email">Wachtwoord vergeten?</Link></small>
-                        <AppButton class="w-min ml-auto" :disabled="form.processing">Inloggen</AppButton>
+                        <AppButton class="w-min ml-auto" :disabled="form.processing" type="submit">Inloggen</AppButton>
                     </div>
                 </div>
             </form>

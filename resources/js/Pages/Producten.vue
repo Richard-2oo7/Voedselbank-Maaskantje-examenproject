@@ -1,17 +1,19 @@
 <script setup>
+    import SearchInput from '../Shared/Components/SearchInput.vue';
     import AppButton from '../Shared/Components/AppButton.vue';
     import CheckBox from '../Shared/Components/form/CheckBox.vue';
     import IconButton from '../Shared/Components/IconButton.vue';
     import AppTable from '../Shared/Components/Table.vue';
-    import SearchInput from '../Shared/Components/SearchInput.vue';
-    import PopUp from '../Shared/Components/PopUp.vue';
     import ProductForm from '../Shared/Components/form/ProductForm.vue';
     import FlashMessage from '../Shared/Components/FlashMessage.vue';
+    import Pagination from '../Shared/Components/Pagination.vue';
     
+    import deleteItems from '../Shared/Composables/DeleteItems.js'
+
+    import { makePopup } from '../Shared/Composables/UsePopUp.js';
+    import PopUp from '../Shared/Components/PopUp.vue';
     
-    import { router } from '@inertiajs/vue3';
-    import { ref, watch, reactive } from 'vue';
-    import { debounce } from 'lodash';
+    import { ref, watch } from 'vue';
     
     const params = route().params;
 
@@ -23,81 +25,28 @@
     const search = ref(params.search ?? '');
     const category = ref(params.category_id ?? 0 );
     
-    const debounceSearch = debounce((query) => {
-        router.get(route('producten'), query, { preserveState: true });
-    },200);
     
+    const { checkBoxArr,
+        updateCheckBoxArr,
+        sendProductPageRequest,
+        checkedItems,
+        deleteCheckedItems, } = deleteItems('producten', props.producten);
+        
+        updateCheckBoxArr(props.producten.data);
+
     watch([search, category], () => {
-        sendProductPageRequest();
-        updateCheckBoxArr();
+        sendProductPageRequest(category, search);
+        updateCheckBoxArr(props.producten.data);
     });
-    
-    const sendProductPageRequest = () =>{
-        const query = {};
-        if (category.value != 0) query.category_id = category.value;
-        if (search.value) query.search = search.value;
 
-        if(props.producten.current_page){
-            query.page = props.producten.current_page;
-        }
-        debounceSearch(query);
-    }
-        
-        const checkBoxArr = reactive({});
-        const updateCheckBoxArr = () => {
-            Object.keys(checkBoxArr).forEach((key) => {
-            if (!props.producten.data.some(product => product.id === Number(key))) {
-                delete checkBoxArr[key];
-            }
-        });
-
-    
-    // Voeg elk product toe aan de checkbox arr
-    props.producten.data.forEach(product => {
-        if (!checkBoxArr[product.id]) {
-            checkBoxArr[product.id] = { id: product.id, checked: false };
-        }
+    watch(() => props.producten.data, (newData) => {
+        updateCheckBoxArr(newData);
     });
+
+    const { popUpContent, open, showPopup } = makePopup();
+    const handlePopUp = (title, component, purpose, values) => {
+        showPopup(title, component, purpose, values);
     };
-
-    updateCheckBoxArr();
-    //als er nieuwe producten zijn word de checkbox arr geupdate
-    watch(() => props.producten.data, () => {
-        updateCheckBoxArr();
-    });
-
-
-    const checkedProducts = () => {
-        return Object.values(checkBoxArr).filter(product => product.checked);
-    }
-    
-    const deleteProducts = () => {
-        const products = checkedProducts().map(p => p.id);
-
-        //return als er 0 producten zijn geselecteerd
-        if(products.length === 0) return
-        
-        console.log(products);
-        axios.delete('/producten', { data: { ids: products } })
-            .then(response => {
-                console.log(response.data);
-                console.log(props.producten);
-
-                sendProductPageRequest();
-
-                
-            })
-            .catch(error => {
-                console.error(error.response.data);
-            });
-    }
-
-    const popUpContent = ref({title: 'Product aanmaken', component: ProductForm, purpose: 'make', values: null})
-    const open = ref(false);
-    const showPopup = (title, component, purpose, values) => {
-        popUpContent.value = {title, component, purpose, values};
-        open.value = true;
-    }
 </script>
 
 <template>
@@ -110,8 +59,8 @@
             <div class="h-min flex justify-between">
 
                 <div class="flex space-x-1 mb-2">
-                    <AppButton variant="small" @click="showPopup('product aanmaken', ProductForm, 'make', {options})">Nieuw product aanmaken</AppButton>
-                    <AppButton variant="small" :withIcon="true" :disabled="!checkedProducts() .length" @click="deleteProducts()">
+                    <AppButton variant="small" @click="handlePopUp('product aanmaken', ProductForm, 'make', {options})">Nieuw product aanmaken</AppButton>
+                    <AppButton variant="small" :withIcon="true" :disabled="!checkedItems() .length" @click="deleteCheckedItems(() => sendProductPageRequest(category, search))">
                         <img src="/public/Icons/DeleteIcon.svg" alt="icon">Verwijderen
                     </AppButton>
                 </div>
@@ -130,34 +79,17 @@
                 <tr v-for="product in producten.data" :key="product.id" class="border-t [&>td]:py-1 [&>td]: [&>td]:items-center hover:bg-slate-100">
                     <td class="space-x-2 flex items-center">
                         <CheckBox v-model="checkBoxArr[product.id].checked"/>
-                        <IconButton @click="showPopup('Product bewerken', ProductForm, 'edit', {options:options, product:product},)">
+                        <IconButton @click="handlePopUp('Product bewerken', ProductForm, 'edit', {options:options, product:product},)">
                             <img src="/public/icons/editIcon.svg" alt="icon">
                         </IconButton>
                     </td>
                     <td>{{ product.EAN }}</td>
                     <td>{{ product.naam }}</td>
-                    <td>{{ product.category.naam }}</td>
+                    <td>{{ product.category ? product.category.naam : 'Geen categorie' }}</td>
                     <td>{{ product.aantal }}</td>
                 </tr>
             </AppTable>
- 
-            <div class="self-end align-bottom h-auto" v-if="producten.links.length > 3">
-                <ul class="flex space-x-4 absolute bottom-0 mb-8">
-                    <li v-for="(link, index) in producten.links" :key="link.label">
-                        <a  
-                            :href="link.url" 
-                            class="flex items-center justify-center w-8 h-8 rounded-full text-center text-sm"
-                            :class="{'bg-orange-500 text-white': link.active,
-                                     'bg-black text-white': index === 0 || index === producten.links.length - 1,
-                                     'opacity-30' : !link.url,
-                                    }"
-                             v-html="index === 0 ? '&lt;' : index === producten.links.length - 1 ? '&gt;' : link.label"
-                            >
-                        </a>
-                    </li>
-                </ul>
-            </div>
-                
+            <Pagination :links="producten.links"/>               
         </div>
     </Layout>
 </template>

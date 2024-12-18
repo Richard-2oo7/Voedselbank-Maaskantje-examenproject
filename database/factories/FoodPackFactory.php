@@ -19,8 +19,7 @@ class FoodPackFactory extends Factory
     {
         return [
             'client_id' => fake()->randomElement(Client::pluck('id')->toArray()), //random client id
-            'datum_samenstelling' => fake()->dateTime(),
-            'uitgiftedatum' => fake()->dateTime(),
+            'uitgiftedatum' => null,
             'opgehaald' => false 
         ];
     }

@@ -14,16 +14,21 @@ class FoodPack extends Model
         return $this->belongsTo(Client::class);
     }
 
-    function products() {
-        return $this->belongsToMany(Product::class, 'FoodPackProducts');
-    }
+public function products()
+{
+    return $this->belongsToMany(Product::class, 'food_pack_products')
+                ->withPivot('food_pack_id', 'product_id', 'aantal_producten');
+
+}
 
     function scopeFilter($query, array $filters) {
+        
         if($filters['search'] ?? null) {
             $query->where(function($q) {
                 $q->where('id', request('search'))
-                  ->orWhere('client_id', request('search'));
+                ->orWhere('client_id', request('search'));
             });
         }
+        $query->latest();
     }
 }

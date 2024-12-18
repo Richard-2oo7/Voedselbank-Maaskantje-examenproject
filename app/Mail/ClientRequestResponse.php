@@ -8,16 +8,17 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class ResponseCLientRequest extends Mailable
+class ClientRequestResponse extends Mailable
 {
     use Queueable, SerializesModels;
 
     /**
      * Create a new message instance.
      */
-    public function __construct()
+    public $medewerkerReactie; // Maak de variabele beschikbaar in de template
+    public function __construct($medewerkerReactie)
     {
-        //
+        $this->medewerkerReactie = $medewerkerReactie; // Zet de waarde
     }
 
     /**
@@ -26,7 +27,7 @@ class ResponseCLientRequest extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Reactie klantverzoek',
+            subject: 'Reactie medewerker',
         );
     }
 
@@ -36,7 +37,7 @@ class ResponseCLientRequest extends Mailable
     public function content(): Content
     {
         return new Content(
-            markdown: 'mail.clientRequestResponse',
+            view: 'mail.ClientRequestResponse',
         );
     }
 

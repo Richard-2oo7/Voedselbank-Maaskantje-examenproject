@@ -3,8 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\Client;
 use App\Models\food_pack_product;
 use App\Models\FoodPack;
+use App\Models\Product;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class FoodPackController extends Controller
@@ -12,21 +15,43 @@ class FoodPackController extends Controller
      /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
+        $startOfWeek = Carbon::now()->startOfWeek(); // Maandag van deze week
+        $endOfWeek = Carbon::now()->endOfWeek(); // Zondag van deze week
+
         $foodPacks = FoodPack::query()
             ->with('client:id,volwassenen,kinderen,babys')
             ->filter(request(['search']))
-            ->select('id', 'client_id', 'uitgiftedatum', 'opgehaald')
+            ->with('client')
+            ->with('products')
             ->whereHas('client', function($query){
                 $query->where('is_klant', true);
             })
-            ->paginate(15)
+            ->paginate(14, ['*'], 'foodpack_page')
             ->withQueryString();
+
+        $clients = Client::query()
+            ->with('foodpacks')
+            ->whereDoesntHave('foodpacks', function($query) use ($startOfWeek, $endOfWeek) {
+                // Check of het laatste voedselpakket voor de klant gemaakt is in deze week
+                $query->whereBetween('datum_samenstelling', [$startOfWeek, $endOfWeek]);
+            })
+            ->paginate(14, ['*'], 'client_page')
+            ->withQueryString();
+
+
+
+        $producten = Product::query()->where('aantal', '>' ,0)->paginate(10, ['*'], 'product_page')->withQueryString();
+
+        $client = Client::find($request->input('client_id'));
 
         //stuur gegevens
         return inertia('Voedselpakketten', [
             'voedselpakketten' => $foodPacks,
+            'klanten' => $clients,
+            'producten' => $producten,
+            'geselecteerdeKlant' => $client,
         ]);
     }
 
@@ -48,29 +73,30 @@ class FoodPackController extends Controller
             'client_id' => 'required|exists:clients,id'
         ]);
         
-        //maak het voedselpakket aan
-        $foodpack = FoodPack::create($validatedFoodPack);
-
         //valideer de producten
         $validatedFoodPackProducts = $request->validate([
             'products' => 'required|array',
-            'products*.id' => 'required|exists:products,id',
-            'products*.aantal.*' => 'required|integer|min:1',
+            'products.*id' => 'required|exists:products,id',
+            'products.*aantal.*' => 'required|integer|min:1',
         ]);
+        
+        //maak het voedselpakket aan
+        $foodpack = FoodPack::create($validatedFoodPack);
 
         //voeg de producten aan het voedselpakket toe
         foreach($validatedFoodPackProducts['products'] as $product){
             food_pack_product::create([
                 'food_pack_id' => $foodpack->id,
-                'product_id' => $product->id,
-                'aantal_producten' => $product->aantal,
+                'product_id' => $product['id'],
+                'aantal_producten' => $product['aantal'],
+            ]);
+            $editedProduct = Product::find($product['id']);
+            $editedProduct->update([
+                'aantal' => $editedProduct->aantal - $product['aantal'],
             ]);
         }
         //stuur reactie
-        return response()->json([
-            'message' => 'voedselpakket succesvol aangemaakt!',
-            'foodpack' => $foodpack,
-        ], 202);
+        return redirect()->back()->with('message', 'voedselpakket succesvol aangemaakt!');
     }
 
     /**
@@ -94,7 +120,19 @@ class FoodPackController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $request->validate([
+            'opgehaald' => 'required|boolean',
+        ]);
+
+        //zoek het voedselpakket
+        $voedselpakket = FoodPack::findOrFail($id);
+
+        $voedselpakket->update([
+            'opgehaald' => 1,
+            'uitgiftedatum' => now()
+        ]);
+
+        return redirect()->back()->with('message', 'voedselpakket geupdate!');
     }
 
     /**

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class ProductController extends Controller
 {
@@ -104,7 +105,6 @@ class ProductController extends Controller
 
     public function destroy(Request $request)
     {
-        // dd($request);
         //valideer
         $request->validate([
             'ids' => 'required|array',
@@ -116,16 +116,11 @@ class ProductController extends Controller
             $ids = $request->input('ids');
             Product::whereIn('id', $ids)->delete();
             //stuur reactie
-            return response()->json([
-                'message' => 'Producten succesvol verwijdert!',
-            ], 200);
+            return redirect()->back()->with('message', 'Producten succesvol verwijderd!');
         }
         catch (\Exception $e) {
             //stuur reactie bij fout
-            return response()->json([
-                'message' => 'Fout in producten verwijderen!',
-                'error' => $e->getMessage(),
-            ], 500); 
+            return redirect()->back()->with('message', 'Fout in producten verwijderen! Zorg dat het product niet voorkomt in voedselpakketten');
         }
     }
 }

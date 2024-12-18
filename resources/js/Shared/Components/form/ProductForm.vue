@@ -11,7 +11,6 @@
     })
 
     const emit = defineEmits(['update:modelValue']);
-    console.log(props.values.product);
 
     const product = props.values.product;
 
@@ -33,7 +32,7 @@
                 })
         } else {
             productForm
-                .post('/producten/', {
+                .post('/producten', {
                     onSuccess: () => emit('update:modelValue', false),
                 })
         }
@@ -41,7 +40,7 @@
 </script>
 <template>
     <!-- edit -->
-        <form>
+        <form @submit.prevent="submit">
             <div class="grid grid-cols-2 gap-4 h-max mt-5">
                 <TextInput label="Naam"  v-model="productForm.naam" :error="productForm.errors.naam"></TextInput>
                 <TextInput label="Product Nummer" v-model="productForm.EAN" v-if="purpose !== 'edit'" :error="productForm.errors.EAN"></TextInput>
@@ -70,12 +69,12 @@
                  <option v-for="option in values.options" :value="option.id" :key="option.id">{{ option.naam }}</option>
              </select>
             </div>
+            <!-- buttons -->
+            <div class="flex justify-end items-end">
+                <AppButton v-html="purpose == 'edit' ? 'bewerken' : 'toevoegen'" :disabled="productForm.processing" type="submit"></AppButton>
+            </div>
         </form>
     
-    <!-- buttons -->
-    <div class="flex justify-end items-end">
-        <AppButton v-html="purpose == 'edit' ? 'bewerken' : 'toevoegen'" @click="submit" type="submit" :disabled="productForm.processing"></AppButton>
-  </div>
 </template>
 <script>
 </script>

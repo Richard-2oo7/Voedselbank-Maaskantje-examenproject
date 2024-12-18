@@ -14,7 +14,7 @@ class Supplier extends Model
         if ($filters['search'] ?? null) {
             $query->where(function($q) {
                 $q->where('bedrijfsnaam', 'like', '%' .request('search'). '%')
-                  ->where('naam', 'like', '%' .request('search'). '%')
+                  ->orwhere('naam', 'like', '%' .request('search'). '%')
                   ->orWhere('email', 'like', '%' .request('search'). '%')
                   ->orWhere('locatie', 'like', '%' .request('search'). '%')
                   ->orWhere('email', 'like', '%' .request('search'). '%')

@@ -1,8 +1,6 @@
 <script setup>
     defineProps({
-        label: {
-            type: String
-        },
+        label: String,
         modelValue: Boolean,
     });
 </script>
@@ -12,6 +10,7 @@
         <input 
             type="checkbox" 
             :id="label"
+            :checked="modelValue"
             class="w-5 h-5 bg-transparent border border-black rounded-md appearance-none relative peer checked:bg-orange-500 cursor-pointer"
             @change="$emit('update:modelValue', $event.target.checked)"
         />
@@ -22,6 +21,7 @@
         v-else
         type="checkbox" 
         :id="label"
+        :checked="modelValue"
         class="w-5 h-5 bg-transparent border border-black rounded-md appearance-none relative peer checked:bg-orange-500 cursor-pointer"
         @change="$emit('update:modelValue', $event.target.checked)"
     />

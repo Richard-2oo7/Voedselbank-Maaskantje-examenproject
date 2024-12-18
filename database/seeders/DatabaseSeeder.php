@@ -24,12 +24,13 @@ class DatabaseSeeder extends Seeder
             CategorySeeder::class, //voegt alle categorieën van producten toe
             RoleSeeder::class,     //voegt alle functies toe: directie, magazijnmedewerker, vrijwilliger
         ]);
-        Employee::factory(10)->create();
-        Supplier::factory(10)->create();
-        Client::factory(10)->create();
-        Product::factory(1090)->create();
-        FoodPack::factory(10)->create();
-        Food_pack_product::factory(10)->create();
+
+        Employee::factory(200)->create();
+        Supplier::factory(200)->create();
+        Client::factory(200)->create();
+        Product::factory(200)->create();
+        FoodPack::factory(200)->create();
+        Food_pack_product::factory(200)->create();
 
     }
 }

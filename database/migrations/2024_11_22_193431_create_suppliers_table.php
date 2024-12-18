@@ -15,11 +15,10 @@ return new class extends Migration
             $table->id();
             $table->string('bedrijfsnaam');
             $table->string('naam');
-            $table->string('locatie');
             $table->string('adres');
             $table->string('email');
             $table->string('telefoonnummer');
-            $table->dateTime('volgende_levering');
+            $table->dateTime('volgende_levering')->nullable();
             $table->timestamps();
         });
     }

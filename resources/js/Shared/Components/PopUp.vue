@@ -1,6 +1,7 @@
 <script setup>
     import { update } from 'lodash';
-import WhiteBox from './WhiteBox.vue';
+    import WhiteBox from './WhiteBox.vue';
+    import { router } from '@inertiajs/vue3';
     import { ref } from 'vue';
     defineProps({
         popUptitle: String,
@@ -9,11 +10,24 @@ import WhiteBox from './WhiteBox.vue';
     const emit = defineEmits(['update:modelValue']);
 
     let closeFormViaOverlay =  (e) => {
-        if(!e.target.closest('.popup'))
-        emit('update:modelValue', false);
+        if(!e.target.closest('.popup')){
+            const currentUrl = new URL(window.location.href);
+            currentUrl.searchParams.delete('client_page');
+            currentUrl.searchParams.delete('client_id');
+            currentUrl.searchParams.delete('client_page');
+            router.visit(currentUrl.toString());     
+
+            emit('update:modelValue', false);
+
+        }
     }
     let closeFormViaButton =  () => {
         emit('update:modelValue', false);
+        const currentUrl = new URL(window.location.href);
+        currentUrl.searchParams.delete('client_page');
+        currentUrl.searchParams.delete('client_id');
+        currentUrl.searchParams.delete('product_page');
+        router.visit(currentUrl.toString());
     }
 </script>
 

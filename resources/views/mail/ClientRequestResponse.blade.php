@@ -1,10 +1,10 @@
 <x-mail.header/>
 <p>
     Beste klant,<br>
-    @if ($medewerkerReactie->word_klant)
+    @if ($medewerkerReactie['wordt_klant'])
         Uw verzoek is geaccepteerd. U kunt volgende week elke vrijdag uw voedselpakket ophalen.
     @else
-        {{ $medewerkerReactie->redenering }}
+        {{ $medewerkerReactie['redenering'] }}
     @endif
 </p>
     <br>

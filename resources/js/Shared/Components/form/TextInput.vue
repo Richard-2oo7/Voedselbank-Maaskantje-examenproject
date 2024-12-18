@@ -11,7 +11,7 @@
         },
         label: String,
         error: String,
-        modelValue: String,  // Dit is de prop die v-model doorgeeft
+        modelValue: [String, Number],  // Dit is de prop die v-model doorgeeft
     })
 </script>
 

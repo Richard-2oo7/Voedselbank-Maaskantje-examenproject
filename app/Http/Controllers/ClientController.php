@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Mail\ConfirmRegistrationClient;
+
 use App\Mail\ClientRequestResponse;
 use App\Models\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Validation\Rule;
 
 class ClientController extends Controller
 {
@@ -17,7 +19,7 @@ class ClientController extends Controller
     public function index()
     {
         // $clients = Client::query()->where('is_klant', true)->paginate(15);
-        $clients = Client::query()->filter(request(['search']))->paginate(15)->withQueryString();
+        $clients = Client::query()->filter(request(['search']))->paginate(14)->withQueryString();
         
         
         return inertia('Klanten', [
@@ -30,7 +32,7 @@ class ClientController extends Controller
     */
     public function indexCLientRequests()
     {
-        $clients = Client::query()->filter(request(['search']) + ['is_klant' => false])->paginate(15)->withQueryString();
+        $clients = Client::query()->filter(request(['search']) + ['is_klant' => false])->paginate(14)->withQueryString();
         
         return inertia('Klantverzoeken', [
             'klantverzoeken' => $clients,
@@ -45,8 +47,7 @@ class ClientController extends Controller
         //valideer
         $validatedClientRequest = $request->validate([
             'id' => 'required|exists:clients',
-            'is_added' => 'required|boolean',
-            'is_rejected' => 'required|boolean',
+            'keuze' => 'required|string',
         ]);
 
         //zoek de klant en pak de email
@@ -56,8 +57,8 @@ class ClientController extends Controller
         //maak de reactie van de medewerker aan
         $medewerkerReactie = [];
 
-        //kijkt of klant word toegevoegt of verwijdert
-        if ($validatedClientRequest['is_added']) {
+        //kijkt of klant word toegevoegt of verwijderd
+        if ($validatedClientRequest['keuze'] == 'accepteren') {
             //voeg de klant toe
             $client->update([
                 'is_klant' => true,
@@ -65,20 +66,19 @@ class ClientController extends Controller
             
             //pas de reactie van de medewerker aan
             $medewerkerReactie = [
-                'word_klant' => true,
-                'reden_afwijzing' => $request->input('beschrijving'),
+                'wordt_klant' => true,
             ];
 
-        } else if ($validatedClientRequest['is_rejected']) {
+        } else {
             //validate the request
             $request->validate([
-                'message' => 'String|max:255'
+                'redenering' => 'String|max:255'
             ]);
 
             $medewerkerReactie = [
-                'word_klant' => false,
+                'wordt_klant' => false,
+                'redenering' => $request->input('redenering'),
             ];
-
             //verwijder de klant
             $client->delete();
         }         
@@ -88,6 +88,7 @@ class ClientController extends Controller
             new ClientRequestResponse($medewerkerReactie)
         );
 
+        return redirect()->back()->with('message', 'Klant verzoek succesvol afgehandeld!');
     }
 
     /**
@@ -119,23 +120,31 @@ class ClientController extends Controller
             'babys' => 'required|integer|min:0',
         ]);
 
+        //als een medewerker een klant toevoegt zorg dat het dat een klant is
+        if (!$request->sentMail){
+            $validatedClient['is_klant'] = 1;
+        } else {
+            $validatedClient['is_klant'] = 0;
+        }
+
         //maak nieuwe klant
         Client::create($validatedClient);
 
-        //stuur email daar de klant
-        $email = $validatedClient['email'];
-        Mail::to($email)->send(
-            new ConfirmRegistrationClient()
-        );
         
         //stuur reactie
-        return redirect()->route('home')->with(
-            'message' , 'U bent succesvol aangemeld als klant. Een medewerker zal er spoedig naar kijken!'
-        );  
-    }
-    //maakt een sessie
-    public function createSession(){
-        return redirect()->route('klanten');
+        //als sentmail true is sturen we een mail
+        if($request->sentMail){
+            //stuur email daar de klant
+            $email = $validatedClient['email'];
+            Mail::to($email)->send(
+                new ConfirmRegistrationClient()
+            );
+
+            return redirect()->route('home')->with('message' , 'U bent succesvol aangemeld als klant. Een medewerker zal er spoedig naar kijken!'); 
+
+        } else {
+            return redirect()->back()->with('message' , 'Klant succesvol aangemaakt!');
+        }
     }
 
     /**
@@ -164,7 +173,7 @@ class ClientController extends Controller
             'postcode' => 'required|string|max:255',
             'gezinsnaam' => 'required|string|max:255',
             'adres' => 'required|string|max:255',
-            'email' => 'required|string|max:255|email|unique:clients,email',
+            'email' => 'required|string|max:255|email|' . Rule::unique('clients', 'email')->ignore($id),
             'telefoonnummer' => 'required|string|max:255',
             'veganistisch' => 'required|boolean',
             'vegetarisch' => 'required|boolean',
@@ -181,19 +190,14 @@ class ClientController extends Controller
         //als de klant niet bestaat
         if(!$client){
             //stuur reactie
-            return response()->json([
-                'message' => 'klant bestaat niet!'
-            ], 404);
+            return redirect()->back()->with('message', 'De klant bestaat niet!');
         }
 
         //update de klant
         $client->update($validatedClient);
 
         //stuur reactie
-        return response()->json([
-            'message' => 'Klant succesvol geupdate!',
-            'client' => $client,
-        ], 202);
+        return redirect()->back()->with('message', 'Klant succesvol geupdate!');
     }
 
     /**
@@ -206,22 +210,18 @@ class ClientController extends Controller
             'ids' => 'required|array|min:1',
             'ids.*' => 'exists:clients,id',
         ]);
-
+        
         try{
             //verwijder alle klanten
             $ids = $request->input('ids');
             Client::whereIn('id', $ids)->delete();
 
             //stuur reactie
-            return response()->json([
-                'message' => 'Producten succesvol verwijdert!',
-            ]);
+            return redirect()->back()->with('message', 'Klant succesvol verwijderd!');
         }
         catch(\Exception $e){
             //stuur reactie
-            return response()->json([
-                'message' => 'Fout bij producten verwijderen!',
-            ], 500);
+            return redirect()->back()->with('message', 'Fout bij klant verwijderen!');
         }
     }
 }

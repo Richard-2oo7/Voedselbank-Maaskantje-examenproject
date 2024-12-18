@@ -22,7 +22,6 @@ class SupplierFactory extends Factory
             'email' => fake()->unique()->safeEmail(),
             'telefoonnummer' => fake()->phoneNumber(),
             'adres' => fake()->address(),
-            'locatie' => fake()->randomElement(['Almere', 'Nieuwegein', 'Lelystad']),
             'volgende_levering' => fake()->dateTime(),
         ];
     }

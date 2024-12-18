@@ -1,31 +1,29 @@
 <script setup>
-import { onMounted, ref, watch, computed } from 'vue';
+import { ref, watch, computed } from 'vue';
 import { usePage } from '@inertiajs/vue3';
 
-let message = ref(null);
 let open = ref(false);
 
 const props = defineProps({
-    modelValue: String,
+    modelValue: [String, Boolean],
 })
 
 const emit = defineEmits(['update:modelValue']);
-const page = usePage();
 
-watch(() => props.modelValue, () => {
+watch(() => props.modelValue, (newValue) => {
+    if(newValue){
         open.value = true;
 
         setTimeout(() => {
             open.value = false;
-            emit('update:modelValue', open.value);
+            emit('update:modelValue', null);
         }, 2500);
-        props.modelValue = null;
+    }
 });
 
 const close = () => {
     open.value = false;
-    emit('update:modelValue', open.value);
-
+    emit('update:modelValue', null);
 };
 
 const isVisible = computed(() => open.value && props.modelValue);

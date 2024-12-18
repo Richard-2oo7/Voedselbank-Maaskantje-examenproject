@@ -25,7 +25,7 @@ return new class extends Migration
             $table->integer('volwassenen')->nullable();
             $table->integer('kinderen')->nullable();
             $table->integer('babys')->nullable();
-            $table->boolean('is_klant')->default(0);
+            $table->boolean('is_klant');
             $table->timestamps();
         });
     }

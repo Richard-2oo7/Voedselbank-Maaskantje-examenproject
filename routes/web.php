@@ -14,11 +14,11 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::inertia('/', 'Home')->name('home');
+Route::post('/klanten', [ClientController::class,'store']);
 
 Route::middleware('guest')->group(function(){
 
     Route::get('/aanmelden', [ClientController::class, 'create'])->name('klantAanmelden');
-    Route::post('/klanten', [ClientController::class,'store']);
     
     Route::get('/inloggen', [SessionController::class, 'create'])->name('login');
     Route::post('/inloggen', [SessionController::class, 'store']);
@@ -50,7 +50,7 @@ Route::middleware('auth')->group(function(){
 
         Route::get('/leveranciers',  [SupplierController::class, 'index'])->name('leveranciers');
         Route::post('/leveranciers',  [SupplierController::class, 'store']);
-        Route::patch('/leveranciers',  [SupplierController::class, 'update']);
+        Route::patch('/leveranciers/{id}',  [SupplierController::class, 'update']);
         Route::delete('/leveranciers',  [SupplierController::class, 'destroy']);
     });
 
@@ -58,7 +58,7 @@ Route::middleware('auth')->group(function(){
     Route::middleware([RoleMiddleware::class. ':vrijwilliger'])->group(function(){
         Route::get('/voedselpakketten', [FoodPackController::class, 'index'])->name('voedselpakketten');
         Route::post('/voedselpakketten', [FoodPackController::class,'store']);
-        Route::delete('/voedselpakketten', [FoodPackController::class,'destroy']);
+        Route::patch('/voedselpakket/{id}', [FoodPackController::class,'update']);
     });
 
     Route::middleware([RoleMiddleware::class])->group(function(){
@@ -67,15 +67,16 @@ Route::middleware('auth')->group(function(){
         Route::delete('/klanten', [ClientController::class,'destroy']);
 
         Route::get('/klantverzoeken', [ClientController::class, 'indexCLientRequests']);
+        Route::post('/klantverzoeken', [ClientController::class, 'responseClientRequest']);
 
         Route::get('/medewerkers', [EmployeeController::class,'index'])->name('medewerkers');
         Route::post('/medewerkers',  [EmployeeController::class, 'store']);
-        Route::patch('/medewerkers',  [EmployeeController::class, 'update']);
+        Route::patch('/medewerkers/{id}',  [EmployeeController::class, 'update']);
         Route::delete('/medewerkers',  [EmployeeController::class, 'destroy']);
 
         Route::get('/productcategorieën', [CategoryController::class, 'index'])->name('productcategorieën');
         Route::post('/productcategorieën',  [CategoryController::class, 'store']);
-        Route::patch('/productcategorieën',  [CategoryController::class, 'update']);
+        Route::patch('/productcategorieën/{id}',  [CategoryController::class, 'update']);
         Route::delete('/productcategorieën',  [CategoryController::class, 'destroy']);
     });
 
