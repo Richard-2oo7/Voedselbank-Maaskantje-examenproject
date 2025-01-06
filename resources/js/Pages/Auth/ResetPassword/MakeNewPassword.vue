@@ -28,7 +28,7 @@
                     <TextInput label="Nieuw wachtwoord" v-model="form.password" type="password" :error="form.errors.password"/>
                     <TextInput label="Bevestig wachtwoord" v-model="form.password_confirmation" type="password" :error="form.errors.password_confirmation"/>
                     <div class="flex">
-                        <AppButton class="w-min ml-auto" :disabled="form.processing">Resetten</AppButton>
+                        <AppButton class="w-min ml-auto" :disabled="form.processing" type="submit">Resetten</AppButton>
                     </div>
                 </div>
             </form>

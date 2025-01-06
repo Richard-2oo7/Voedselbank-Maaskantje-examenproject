@@ -31,7 +31,7 @@
                     <small class="mb-5"><p>Voer de code in die naar <strong>{{ email }}</strong> is verzonden.</p></small>
                     <TextInput label="Code" v-model="form.code" :error="form.errors.code"/>
                     <div class="flex">
-                        <AppButton class="w-min ml-auto" :disabled="form.processing">Resetten</AppButton>
+                        <AppButton class="w-min ml-auto" :disabled="form.processing" type="submit">Resetten</AppButton>
                     </div>
                 </div>
             </form>
